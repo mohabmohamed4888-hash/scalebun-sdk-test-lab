@@ -1,0 +1,12 @@
+{
+  "name": "scalebun-test-lab-network-server",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Deterministic HTTP server for the ScaleBun SDK Test Lab Network screen (zero dependencies).",
+  "main": "server.js",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "start": "node server.js",
+    "test": "node server.test.js"
+  }
+}

@@ -1,0 +1,23 @@
+# Runs RUN SAFE TEST SUITE, waits for it to finish, then opens Results filtered
+# to failures. Needs a configured build (.env) to be meaningful.
+appId: com.scalebun.sdktestlab
+---
+- launchApp
+- extendedWaitUntil:
+    visible:
+      id: "screen-Home"
+    timeout: 60000
+- tapOn:
+    id: "run-all-safe"
+# "Cancel suite" is rendered only while the suite is running.
+- extendedWaitUntil:
+    notVisible: "Cancel suite"
+    timeout: 1800000
+- tapOn: "Results / Export"
+- extendedWaitUntil:
+    visible:
+      id: "screen-Results"
+    timeout: 30000
+- tapOn:
+    id: "filter-FAIL"
+- takeScreenshot: safe-suite-failures

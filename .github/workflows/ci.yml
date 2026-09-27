@@ -1,0 +1,119 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      ios:
+        description: Also build the iOS app (macOS runner, billed at 10x on private repos)
+        type: boolean
+        default: false
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  js:
+    name: JS checks (types, lint, Jest, tools, release bundles)
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run check
+      - name: SDK_COVERAGE.md is up to date
+        run: |
+          npm run docs:coverage
+          git diff --exit-code -- SDK_COVERAGE.md
+
+  android:
+    name: Android release build + emulator smoke
+    runs-on: ubuntu-latest
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: zulu
+          java-version: 17
+      - uses: gradle/actions/setup-gradle@v4
+      - run: npm ci
+      - name: Assemble release APK (arm64-v8a for devices, x86_64 for the emulator)
+        working-directory: android
+        run: ./gradlew assembleRelease -PreactNativeArchitectures=arm64-v8a,x86_64 --no-daemon
+      - uses: actions/upload-artifact@v4
+        with:
+          name: sdk-test-lab-release-apk
+          path: android/app/build/outputs/apk/release/app-release.apk
+          if-no-files-found: error
+      - name: Enable KVM for the emulator
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+      - name: Launch on emulator + Maestro smoke flows
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 34
+          arch: x86_64
+          target: google_apis
+          profile: pixel_6
+          disable-animations: true
+          script: bash scripts/ci-android-smoke.sh android/app/build/outputs/apk/release/app-release.apk
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: android-smoke
+          path: build/smoke/
+          if-no-files-found: ignore
+
+  ios:
+    name: iOS simulator build (manual)
+    if: github.event_name == 'workflow_dispatch' && inputs.ios
+    runs-on: macos-15
+    timeout-minutes: 90
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.3'
+          bundler-cache: true
+      - run: npm ci
+      - name: pod install
+        working-directory: ios
+        run: bundle exec pod install
+      - name: xcodebuild (Release, iphonesimulator, unsigned)
+        working-directory: ios
+        run: |
+          xcodebuild -workspace ScaleBunSdkTestLab.xcworkspace -scheme ScaleBunSdkTestLab \
+            -configuration Release -sdk iphonesimulator -destination 'generic/platform=iOS Simulator' \
+            CODE_SIGNING_ALLOWED=NO build > xcodebuild.log 2>&1 || {
+            grep -nE "error:|BUILD FAILED|The following build commands failed" xcodebuild.log | head -n 150
+            tail -n 40 xcodebuild.log
+            exit 1
+          }
+          tail -n 5 xcodebuild.log
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: ios-xcodebuild-log
+          path: ios/xcodebuild.log
+          if-no-files-found: ignore

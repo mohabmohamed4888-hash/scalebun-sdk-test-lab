@@ -1,0 +1,107 @@
+# Android smoke flow: Results, Config and all 18 capability screens mount and
+# render their test cards without a crash. Asserts Test Lab UI only; ScaleBun
+# delivery is verified separately (DASHBOARD_VERIFICATION.md). CI runs this
+# against the release APK (scripts/ci-android-smoke.sh). `back` is Android-only.
+appId: com.scalebun.sdktestlab
+---
+- launchApp
+- extendedWaitUntil:
+    visible:
+      id: "screen-Home"
+    timeout: 60000
+- scrollUntilVisible:
+    element:
+      text: "Results / Export"
+    direction: DOWN
+- tapOn: "Results / Export"
+- extendedWaitUntil:
+    visible:
+      id: "screen-Results"
+    timeout: 30000
+- tapOn:
+    id: "filter-FAIL"
+- tapOn:
+    id: "filter-ALL"
+- back
+- scrollUntilVisible:
+    element:
+      text: "Config profiles"
+    direction: DOWN
+- tapOn: "Config profiles"
+- extendedWaitUntil:
+    visible:
+      id: "screen-Config"
+    timeout: 30000
+- back
+- runFlow:
+    file: subflows/open_category.yaml
+    env:
+      ROUTE: Setup
+- runFlow:
+    file: subflows/open_category.yaml
+    env:
+      ROUTE: Analytics
+- runFlow:
+    file: subflows/open_category.yaml
+    env:
+      ROUTE: Sessions
+- runFlow:
+    file: subflows/open_category.yaml
+    env:
+      ROUTE: Identity
+- runFlow:
+    file: subflows/open_category.yaml
+    env:
+      ROUTE: Errors
+- runFlow:
+    file: subflows/open_category.yaml
+    env:
+      ROUTE: Network
+- runFlow:
+    file: subflows/open_category.yaml
+    env:
+      ROUTE: Offline
+- runFlow:
+    file: subflows/open_category.yaml
+    env:
+      ROUTE: Performance
+- runFlow:
+    file: subflows/open_category.yaml
+    env:
+      ROUTE: Replay
+- runFlow:
+    file: subflows/open_category.yaml
+    env:
+      ROUTE: Navigation
+- runFlow:
+    file: subflows/open_category.yaml
+    env:
+      ROUTE: Push
+- runFlow:
+    file: subflows/open_category.yaml
+    env:
+      ROUTE: Engage
+- runFlow:
+    file: subflows/open_category.yaml
+    env:
+      ROUTE: Attribution
+- runFlow:
+    file: subflows/open_category.yaml
+    env:
+      ROUTE: Privacy
+- runFlow:
+    file: subflows/open_category.yaml
+    env:
+      ROUTE: Ota
+- runFlow:
+    file: subflows/open_category.yaml
+    env:
+      ROUTE: Diagnostics
+- runFlow:
+    file: subflows/open_category.yaml
+    env:
+      ROUTE: FeatureMatrix
+- runFlow:
+    file: subflows/open_category.yaml
+    env:
+      ROUTE: Edge

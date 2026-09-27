@@ -1,0 +1,19 @@
+# Opens one capability screen from Home and returns. Called with env ROUTE.
+appId: com.scalebun.sdktestlab
+---
+- scrollUntilVisible:
+    element:
+      id: "nav-${ROUTE}"
+    direction: DOWN
+    timeout: 30000
+- tapOn:
+    id: "nav-${ROUTE}"
+- extendedWaitUntil:
+    visible:
+      id: "screen-${ROUTE}"
+    timeout: 30000
+- back
+- extendedWaitUntil:
+    visible:
+      id: "screen-Home"
+    timeout: 30000

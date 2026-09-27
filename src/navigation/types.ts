@@ -1,0 +1,35 @@
+export type RootStackParamList = {
+  Home: undefined;
+  Results: undefined;
+  Config: undefined;
+  DangerZone: undefined;
+  Egress: undefined;
+  ReplayPlayground: undefined;
+  Impressions: { runId?: string } | undefined;
+  PrivacySecret: undefined;
+  NavA: undefined;
+  NavB: { testRunId?: string } | undefined;
+  NavC: undefined;
+  NestedTabs: { screen?: 'TabOne' | 'TabTwo' } | undefined;
+  LabModal: undefined;
+  Setup: undefined;
+  Analytics: undefined;
+  Sessions: undefined;
+  Identity: undefined;
+  Errors: undefined;
+  Network: undefined;
+  Offline: undefined;
+  Performance: { heavy?: boolean } | undefined;
+  Replay: undefined;
+  Navigation: undefined;
+  Push: undefined;
+  Engage: undefined;
+  Attribution: undefined;
+  Privacy: undefined;
+  Ota: undefined;
+  Diagnostics: undefined;
+  FeatureMatrix: undefined;
+  Edge: undefined;
+};
+
+export type TabParamList = { TabOne: undefined; TabTwo: undefined };

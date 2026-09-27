@@ -1,0 +1,13 @@
+{
+  "name": "scalebun-test-lab-verifier",
+  "private": true,
+  "version": "1.0.0",
+  "description": "Server-side verification companion for the ScaleBun SDK Test Lab. Uses a gitignored .env.verifier; never bundled into the app.",
+  "main": "verify.js",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "auth": "node verify.js auth",
+    "checklist": "node verify.js checklist",
+    "test": "node verify.test.js"
+  }
+}

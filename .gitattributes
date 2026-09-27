@@ -1,0 +1,10 @@
+# LF in the repo and in every checkout: the Gradle wrapper and shell scripts must
+# stay LF for the macOS/Linux CI runners. Windows batch files stay CRLF.
+* text=auto eol=lf
+*.bat text eol=crlf
+*.cmd text eol=crlf
+*.jar binary
+*.keystore binary
+*.png binary
+*.jpg binary
+*.ttf binary

@@ -1,0 +1,32 @@
+# Drives the Replay Playground interactions used by RPL-006/RPL-007 (fake data only).
+appId: com.scalebun.sdktestlab
+---
+- launchApp
+- extendedWaitUntil:
+    visible:
+      id: "screen-Home"
+    timeout: 60000
+- scrollUntilVisible:
+    element:
+      text: "Replay Playground"
+    direction: DOWN
+- tapOn: "Replay Playground"
+- extendedWaitUntil:
+    visible:
+      id: "screen-ReplayPlayground"
+    timeout: 30000
+- tapOn:
+    id: "input-text"
+- inputText: "maestro typed text"
+- hideKeyboard
+- repeat:
+    times: 10
+    commands:
+      - tapOn:
+          id: "fast-tap"
+- assertVisible: "Fast tap .10."
+- tapOn: "Open modal"
+- tapOn: "Close modal"
+- scroll
+- scroll
+- back

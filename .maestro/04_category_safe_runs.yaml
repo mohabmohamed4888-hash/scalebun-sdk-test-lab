@@ -1,0 +1,31 @@
+# Runs the per-category safe suites that need no external setup.
+appId: com.scalebun.sdktestlab
+---
+- launchApp
+- extendedWaitUntil:
+    visible:
+      id: "screen-Home"
+    timeout: 60000
+- scrollUntilVisible:
+    element:
+      id: "nav-Edge"
+    direction: DOWN
+- tapOn:
+    id: "nav-Edge"
+- tapOn:
+    id: "run-safe-Edge"
+- extendedWaitUntil:
+    visible: "Run .* safe tests in this category"
+    timeout: 300000
+- back
+- scrollUntilVisible:
+    element:
+      id: "nav-Diagnostics"
+    direction: DOWN
+- tapOn:
+    id: "nav-Diagnostics"
+- tapOn:
+    id: "run-safe-Diagnostics"
+- extendedWaitUntil:
+    visible: "Run .* safe tests in this category"
+    timeout: 300000
