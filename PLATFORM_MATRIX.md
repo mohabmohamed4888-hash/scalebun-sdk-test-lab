@@ -2,7 +2,7 @@
 
 Legend: ✅ passed · ❌ failed · ⏳ NOT RUN · ➖ not applicable (SKIPPED WITH REASON) · 🟡 passed with caveat
 
-**Honesty rule:** a feature is marked tested on a platform only after it has actually been run there. As of 2026-09-27, **no on-device run has happened on either platform**. The build machine is Windows 11 with no JDK, Android SDK or emulator, and iOS cannot be built on Windows. No ScaleBun app/client key was available yet, so no delivery could be verified.
+**Honesty rule:** a feature is marked tested on a platform only after it has actually been run there. As of 2026-09-28, the **Android release APK has been built and launched on an API 34 emulator in CI** (GitHub Actions), with no `.env`, so the app ran in NOT_CONFIGURED mode. **No physical-device run** has happened yet, and iOS has not been built (the CI iOS job is manual). The development machine is Windows 11 with no JDK/Android SDK, so native builds run in CI. No ScaleBun app/client key was available yet, so no delivery could be verified.
 
 ## Build & static checks
 
@@ -14,9 +14,11 @@ Legend: ✅ passed · ❌ failed · ⏳ NOT RUN · ➖ not applicable (SKIPPED W
 | Production JS bundle (`react-native bundle --dev false`) | ✅ 2.50 MB | ✅ 2.50 MB | `npm run bundle:check` |
 | Bundle secret scan | ✅ only validation regex literals | ✅ | README → Security |
 | TypeScript strict / ESLint / Jest (47) / tool self-tests | ✅ platform-independent | ✅ | `npm run check` |
-| Gradle build (`assembleDebug` / `assembleRelease`) | ⏳ no JDK/Android SDK on this machine | ➖ | — |
-| `pod install` + Xcode build | ➖ | ⏳ needs macOS | — |
-| App launches on device/emulator | ⏳ | ⏳ | — |
+| Gradle `assembleRelease` (arm64-v8a + x86_64, New Arch, Hermes) | ✅ CI | ➖ | [CI run 36348878191](https://github.com/mohabmohamed4888-hash/scalebun-sdk-test-lab/actions/runs/36348878191) |
+| `pod install` + Xcode build | ➖ | ⏳ CI job exists (manual: Actions → CI → Run workflow → ios) | — |
+| App cold-launches with no fatal error (emulator API 34, NOT_CONFIGURED) | ✅ CI | ⏳ | [CI run 36348878191](https://github.com/mohabmohamed4888-hash/scalebun-sdk-test-lab/actions/runs/36348878191) |
+| Maestro: Results, Config, all 18 capability screens, Replay Playground interactions | ✅ CI | ⏳ | [CI run 36348878191](https://github.com/mohabmohamed4888-hash/scalebun-sdk-test-lab/actions/runs/36348878191) |
+| Physical device | ⏳ | ⏳ | — |
 
 ## Capability status (on device)
 
