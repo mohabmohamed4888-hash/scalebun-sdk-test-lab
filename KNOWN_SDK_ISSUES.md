@@ -21,6 +21,7 @@ site with the KSI id.
 | KSI-009 | Medium | Privacy / Android | Confirmed (manifest) |
 | KSI-010 | Low | Network | Confirmed (feature gap) |
 | KSI-011 | Low | Docs / push | Confirmed |
+| KSI-012 | Medium (Android build) | Push setup advice | Confirmed (CI build) |
 
 ---
 
@@ -114,6 +115,12 @@ site with the KSI id.
 - The README's "Optional peer dependencies" table maps *Push notifications → `@notifee/react-native`*.
 - The push subsystem selects `@react-native-firebase/messaging` first (full callbacks), then the native bridge (token-only), then manual. `doctor` / `init android` ask for RNFirebase.
 - The Test Lab installs both. Notifee is only used for local display when present.
+
+## KSI-012 — Following `scalebun init android` push advice breaks the Android build with RNFirebase messaging
+
+- **Repro:** `npx scalebun init android --check` (or `doctor`) asks you to *"Declare a default FCM channel meta-data in AndroidManifest.xml (com.google.firebase.messaging.default_notification_channel_id)"*. Add it as plain `<meta-data android:name=… android:value="my_channel"/>`, install `@react-native-firebase/messaging` (the adapter the SDK selects first), then run `./gradlew assembleRelease`.
+- **Actual:** `:app:processReleaseMainManifest` fails: *"Manifest merger failed : Attribute meta-data#com.google.firebase.messaging.default_notification_channel_id@value … is also present at [:react-native-firebase_messaging]"*. This was first observed in this repo's CI (GitHub Actions, Android job).
+- **Fix:** add `xmlns:tools="http://schemas.android.com/tools"` and `tools:replace="android:value"` to the meta-data (done in `android/app/src/main/AndroidManifest.xml`). The SDK's advice should say so.
 
 ---
 
